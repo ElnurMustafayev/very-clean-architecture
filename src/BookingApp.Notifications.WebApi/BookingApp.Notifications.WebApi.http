@@ -1,0 +1,6 @@
+@BookingApp.Notifications.WebApi_HostAddress = http://localhost:5100
+
+GET {{BookingApp.Notifications.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
