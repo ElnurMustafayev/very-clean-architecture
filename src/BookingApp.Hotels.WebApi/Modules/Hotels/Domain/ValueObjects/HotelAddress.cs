@@ -1,15 +1,34 @@
 namespace BookingApp.Hotels.WebApi.Modules.Hotels.Domain.ValueObjects;
 
-using MongoDB.Bson.Serialization.Attributes;
+using BookingApp.Hotels.WebApi.Shared.Domain.Exceptions;
+using BookingApp.Hotels.WebApi.Shared.Domain.ValueObjects;
 
-public class HotelAddress
+public class HotelAddress : ValueObject
 {
-    [BsonElement("country")]
-    public required string Country { get; set; }
+    public string Country { get; private set; }
 
-    [BsonElement("city")]
-    public required string City { get; set; }
+    public string City { get; private set; }
 
-    [BsonElement("street")]
-    public required string Street { get; set; }
+    public string Street { get; private set; }
+
+    private HotelAddress(string country, string city, string street)
+    {
+        this.Country = country;
+        this.City = city;
+        this.Street = street;
+    }
+
+    public static HotelAddress Create(string country, string city, string street)
+    {
+        if (string.IsNullOrWhiteSpace(country))
+            throw new DomainException("Country cannot be empty.");
+
+        if (string.IsNullOrWhiteSpace(city))
+            throw new DomainException("City cannot be empty.");
+
+        if (string.IsNullOrWhiteSpace(street))
+            throw new DomainException("Street cannot be empty.");
+        
+        return new HotelAddress(country, city, street);
+    }
 }
