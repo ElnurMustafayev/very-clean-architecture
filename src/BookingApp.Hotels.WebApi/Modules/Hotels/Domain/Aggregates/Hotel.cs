@@ -1,11 +1,10 @@
-namespace BookingApp.Hotels.WebApi.Modules.Hotels.Domain.Entities;
+namespace BookingApp.Hotels.WebApi.Modules.Hotels.Domain.Aggregates;
 
-using BookingApp.Hotels.WebApi.Modules.Hotels.Domain.Events;
 using BookingApp.Hotels.WebApi.Modules.Hotels.Domain.ValueObjects;
 using BookingApp.Hotels.WebApi.Shared.Domain.Aggregates;
 using BookingApp.Hotels.WebApi.Shared.Domain.Exceptions;
 
-public class Hotel : AggregateRoot<int>
+public class Hotel : AggregateRoot<Guid>
 {
     public string Name { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
@@ -16,8 +15,9 @@ public class Hotel : AggregateRoot<int>
 
     private Hotel() {}
 
-    private Hotel(string name, string description, HotelAddress? address, double? rating)
+    private Hotel(Guid id, string name, string description, HotelAddress? address, double? rating)
     {
+        this.Id = id;
         this.Name = name;
         this.Description = description;
         this.Address = address;
@@ -47,7 +47,7 @@ public class Hotel : AggregateRoot<int>
             }
         }
 
-        var result = new Hotel(name, description, address, rating);
+        var result = new Hotel(Guid.NewGuid(), name, description, address, rating);
 
         return result;
     }

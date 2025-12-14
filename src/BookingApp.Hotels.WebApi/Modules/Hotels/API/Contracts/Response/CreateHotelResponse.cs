@@ -1,3 +1,3 @@
 namespace BookingApp.Hotels.WebApi.Modules.Hotels.API.Contracts.Response;
 
-public record CreateHotelResponse(int Id);
+public record CreateHotelResponse(Guid Id);

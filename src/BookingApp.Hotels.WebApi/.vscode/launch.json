@@ -10,7 +10,7 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
-            "envFile": "${workspaceFolder}/.env",
+            "envFile": "${workspaceFolder}/local.env",
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ASPNETCORE_URLS": "http://localhost:5000"
