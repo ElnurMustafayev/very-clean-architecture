@@ -6,6 +6,6 @@ public interface IRepository<TAggregateRoot, TId>
     where TAggregateRoot : AggregateRoot<TId>
     where TId : notnull
 {
-    public Task<TAggregateRoot?> GetByIdAsync(TId id);
-    public Task SaveAsync(TAggregateRoot aggregateRoot);
+    public Task<TAggregateRoot?> GetByIdAsync(TId id, CancellationToken cancellationToken);
+    public Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken);
 }

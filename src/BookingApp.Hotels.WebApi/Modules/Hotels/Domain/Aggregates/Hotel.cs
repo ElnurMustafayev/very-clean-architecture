@@ -1,5 +1,6 @@
 namespace BookingApp.Hotels.WebApi.Modules.Hotels.Domain.Aggregates;
 
+using BookingApp.Hotels.WebApi.Modules.Hotels.Domain.Events;
 using BookingApp.Hotels.WebApi.Modules.Hotels.Domain.ValueObjects;
 using BookingApp.Hotels.WebApi.Shared.Domain.Aggregates;
 using BookingApp.Hotels.WebApi.Shared.Domain.Exceptions;
@@ -47,8 +48,10 @@ public class Hotel : AggregateRoot<Guid>
             }
         }
 
-        var result = new Hotel(Guid.NewGuid(), name, description, address, rating);
+        var newHotel = new Hotel(Guid.NewGuid(), name, description, address, rating);
+        
+        newHotel.AddDomainEvent(new HotelCreatedEvent(newHotel.Id, DateTime.UtcNow));
 
-        return result;
+        return newHotel;
     }
 }

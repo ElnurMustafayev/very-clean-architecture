@@ -2,46 +2,38 @@ namespace BookingApp.Hotels.WebApi.Modules.Hotels.Infrastructure.Persistence.Rep
 
 using BookingApp.Hotels.WebApi.Modules.Hotels.Domain.Aggregates;
 using BookingApp.Hotels.WebApi.Modules.Hotels.Domain.Interfaces;
-using BookingApp.Hotels.WebApi.Modules.Hotels.Infrastructure.Persistence.Options;
-using Microsoft.Extensions.Options;
+using BookingApp.Hotels.WebApi.Modules.Hotels.Infrastructure.Persistence.UnitOfWork;
 using MongoDB.Driver;
 
 public class HotelMongoRepository : IHotelRepository
 {
-    private readonly HotelMongoDatabaseOptions databaseOptions;
+    private readonly IMongoCollection<Hotel> collection;
+    private readonly IHotelUnitOfWork unitOfWork;
 
-    public HotelMongoRepository(IOptions<HotelMongoDatabaseOptions> databaseOptions)
+    public HotelMongoRepository(IHotelUnitOfWork unitOfWork)
     {
-        this.databaseOptions = databaseOptions.Value;
+        this.unitOfWork = unitOfWork;
+        this.collection = unitOfWork.Database.GetCollection<Hotel>("hotels");
     }
 
-    public async Task<Hotel?> GetByIdAsync(Guid id)
+    public async Task<Hotel?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var client = new MongoClient(this.databaseOptions.ConnectionString);
-        var database = client.GetDatabase("hotels_db");
-
-        var collection = database.GetCollection<Hotel>("hotels");
-
-        return await collection
+        return await this.collection
             .Find(x => x.Id == id)
-            .FirstOrDefaultAsync(CancellationToken.None);
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task SaveAsync(Hotel aggregateRoot)
+    public async Task SaveAsync(Hotel aggregateRoot, CancellationToken cancellationToken)
     {
-        var client = new MongoClient(this.databaseOptions.ConnectionString);
-        var database = client.GetDatabase("hotels_db");
-
-        var collection = database.GetCollection<Hotel>("hotels");
-
-        var result = await collection.ReplaceOneAsync(
-            filter: Builders<Hotel>.Filter.Eq(x => x.Id, aggregateRoot.Id),
-            replacement: aggregateRoot,
-            options: new ReplaceOptions
-            {
-                IsUpsert = true
-            },
-            cancellationToken: CancellationToken.None
-        );
+        var result = await this.collection
+            .ReplaceOneAsync(
+                filter: Builders<Hotel>.Filter.Eq(x => x.Id, aggregateRoot.Id),
+                replacement: aggregateRoot,
+                options: new ReplaceOptions
+                {
+                    IsUpsert = true
+                },
+                cancellationToken: cancellationToken
+            );
     }
 }

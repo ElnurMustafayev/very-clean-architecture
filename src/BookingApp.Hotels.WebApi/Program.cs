@@ -1,7 +1,9 @@
 using System.Reflection;
 using BookingApp.Hotels.WebApi.Modules.Hotels.Domain.Interfaces;
 using BookingApp.Hotels.WebApi.Modules.Hotels.Infrastructure.Persistence.Options;
+using BookingApp.Hotels.WebApi.Modules.Hotels.Infrastructure.Persistence.Outbox;
 using BookingApp.Hotels.WebApi.Modules.Hotels.Infrastructure.Persistence.Repositories;
+using BookingApp.Hotels.WebApi.Modules.Hotels.Infrastructure.Persistence.UnitOfWork;
 using BookingApp.Hotels.WebApi.Shared.API.Middlewares;
 using BookingApp.Hotels.WebApi.Shared.Application.Behaviors;
 using FluentValidation;
@@ -14,7 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IOutboxWriter, MongoOutboxWriter>();
 builder.Services.AddScoped<IHotelRepository, HotelMongoRepository>();
+builder.Services.AddScoped<IHotelUnitOfWork, HotelUnitOfWork>();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddAutoMapper(config => {}, Assembly.GetExecutingAssembly());
 builder.Services.AddMediatR(config =>
